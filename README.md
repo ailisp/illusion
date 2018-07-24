@@ -73,6 +73,7 @@ Using [https://github.com/commonqt/commonqt](CommonQt) methods a lot is not very
                     (list* 'optimized-call t (read stream) (symbol-name indicator)
                            (cl-read-list stream))))
 ```
+
 Here `(optimized-call t obj "methodName" arg1 arg2)` is how CommonQt call Qt Method `(#_methodName obj arg1 arg2)` and after this `SET-PAREN-READER` we can simply use `(|methodName obj arg1 arg2)`. Even better, we can use `(ILLUSION:SET-INDICATOR-MODE :PRESERVE-CASE)` then just `(methodName obj arg1 arg2)`.
 In this indicator mode, it will first try the preserve case symbol and check if it satisfies any left paren reader predicate. If none, indicator will fallback to upcase, so all existing Common Lisp and user package symbols still works. In rare case if you have lower and mixed case symbol as function/macro names, try to isolate them with the scope that using CommonQt.
 ### CSS id and class attached to html element creation function name
@@ -91,6 +92,7 @@ In [https://github.com/ailisp/flute](flute) html generation library, HTML elemen
                       (list* (find-symbol (first name-and-id) :stub-html)
                              :id (string-downcase (second name-and-id))
                              (cl-read-list stream)))))
+```
 ## Set indicator mode
 As showed in the CommonQt example, illusion support `SET-INDICATOR-MODE`. Currently `:STANDARD` (default), `:PRESERVE-CASE` and `(INDICATOR-READER . INDICATOR-FALLBACK)` is supported. `INDICATOR-READER` is a function take a stream as only required argument and return the indicator it reads. `INDICATOR-FALLBACK` is a function called when indicator not satisfied any left paren reader and take indicator as only argument, returns the object that `CL:READ` would return when reading that indicator.
 
