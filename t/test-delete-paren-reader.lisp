@@ -8,8 +8,8 @@
   (delete-paren-reader :html))
 
 (test delete-single-paren-reader
-  (is (equal '(div.main)
-             (read-from-string "(div.main)"))))
+  (is (equal '(div#main)
+             (read-from-string "(div#main)"))))
 
 (run! 'delete-single-paren-reader)
 

@@ -79,8 +79,7 @@
   (setf *paren-readers* (delete-if (paren-reader-name-matcher name) *paren-readers*)))
 
 (defun delete-all-paren-readers ()
-  (setf *paren-readers* nil)
-  (init-paren-readers))
+  (setf *paren-readers* nil))
 
 (defmacro! with-reader-case (case &body body)
   `(let ((,g!previous-case (readtable-case *readtable*)))
@@ -118,13 +117,3 @@
   (:merge :standard)
   (:macro-char #\( #'illusion-read-list)
   (:macro-char #\) #'illusion-read-right-paren))
-
-(defun init-paren-readers ()
-  (set-paren-reader :delete-paren-reader
-                    (lambda (i) (eql i 'illusion:delete-paren-reader))
-                    (lambda (stream indicator) (cons indicator (cl-read-list stream))))
-  (set-paren-reader :delete-all-paren-readers
-                    (lambda (i) (eql i 'illusion:delete-all-paren-readers))
-                    (lambda (stream indicator) (prog1 (list indicator) (cl-read-list stream)))))
-
-(init-paren-readers)

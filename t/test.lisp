@@ -27,7 +27,7 @@
 
 (test html-ids
   (is (equal (list 'stub-html:div :id "main")
-             (read-from-string "(div.main)")))
+             (read-from-string "(div#main)")))
   (is (equal (list 'div "something")
              (read-from-string "(div \"something\")")))
   (is (equal '(|SOMETHING-ELSE| \A \B 3 "a")
