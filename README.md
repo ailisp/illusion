@@ -1,11 +1,11 @@
 # Illusion
 
-Illusion is a library for cutomization and management of Lisp left paren reader.
+Illusion is a library for customization and management of Lisp left paren reader.
 
 # Overview
 
 - Adding customized left paren reader macro, based on indicator (first element of list);
-- Automactically use left paren reader macro when indicator satisfies user defined predicate;
+- Automatically use left paren reader macro when indicator satisfies user defined predicate;
 - Optionally read indicator in case sensitive or customized mode and still read the rest with default reader behavior
 - Delete paren left paren reader even they break reader behavior.
 
@@ -35,14 +35,14 @@ Use a `SET-PAREN-READER` to add or change a left paren reader. `NAME` is a keywo
 
 
 ## Examples
-### Temporarilly change to preserve case reader after specific indicator
+### Temporarily change to preserve case reader after specific indicator
 The first example, assume we want to write a `DEFINE-CLI` which take command line specs and produce a command line argument parser. The command line option is usually case sensitive, so this won't work:
 ```lisp
 (define-cli :main
     (v version "Display version of this program")
     (V verbose "Set verbose level"))
 ```
-`v` and `V` will both read to `V`. We can use `"v"`, `#\v`, `\v` or `|v|`, but each one is more verbose. Or we can `(setf (readtable-case *readtable*) :preserve)`, but this force us to use upcase symbols for all cl symbols. What if the reader auto turns on preserve case after encounter `DEFINE-CLI` indicator? We can define it as:
+`v` and `V` will both read to `V`. We can use `"v"`, `#\v`, `\v` or `|v|`, but each one is more verbose. Or we can `(setf (readtable-case *readtable*) :preserve)`, but this force us to use upcase symbols for all CL symbols. What if the reader auto turns on preserve case after encounter `DEFINE-CLI` indicator? We can define it as:
 ```lisp
 (set-paren-reader :define-cli
                   (lambda (i)
@@ -57,15 +57,16 @@ A few note about this left paren reader:
 - To compare with a symbol, must given the symbol with its package name like `STUB-CLI:DEFINE-CLI`
 - The reader (third parameter of `SET-PAREN-READER` should return newly cons list. Avoid using `'` or backquote. Because sometimes they create lists with shared structure and cause strange behavior.
 - `ILLUSION:WITH-READER-CASE` is a trivial but handy utility, that executing the body with `(READTABLE-CASE *READTABLE*)` bind to one of `:UPCASE`, `:DOWNCASW`, `:PRESERVE` or `:INVERSE`, and unwind to previous `(READTABLE-CASE *READTABLE*)` setting after leave it.
+- If you want this left paren make effect in current file, need to wrap `(set-paren-reader ...)` inside `(eval-when (:compile-toplevel :load-toplevel :execute) ...)` like changing other reader macros.
 
-This only saving a little effort when define cli, but similar techiques can be helpful in accessing case sensitive foreign languages. For example, inline calling a JavaScript method as that in ClojureScript and inline calling a Qt method as if in C++.
+This only saving a little effort when define cli, but similar techniques can be helpful in accessing case sensitive foreign languages. For example, inline calling a JavaScript method as that in ClojureScript and inline calling a Qt method as if in C++.
 
 ### Inline calling CommonQt methods
 Calling a CommonQt method need a `#_` reader macro:
 ```lisp
 (#_setBrush painter "brush name")
 ```
-Using [https://github.com/commonqt/commonqt](CommonQt) methods a lot is not very pleasant because of many `#_`. If we're doing GUI programming with CommonQt, usually it make sense to have a whole package dedicated to ui definition and event handling. With the following left paren reader, we can use CommonQt methods as if using Common Lisp functions while let Common Lisp's package system and illusion do the symbol isolation:
+Using [https://github.com/commonqt/commonqt](CommonQt) methods a lot is not very pleasant because of many `#_`. If we're doing GUI programming with CommonQt, usually it make sense to have a whole package dedicated to UI definition and event handling. With the following left paren reader, we can use CommonQt methods as if using Common Lisp functions while let Common Lisp's package system and illusion do the symbol isolation:
 ```lisp
 (set-paren-reader :commonqt
                   #'qt-symbol-p
